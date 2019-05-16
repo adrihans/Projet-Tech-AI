@@ -75,16 +75,11 @@ for k in range(200):
             #feedforward pour les couches l1 et l2 (relu l1 et sigmoid l2)
             l1 = relu(x.dot(w1))
             l2 = sigmoid(l1.dot(w2))
-            print(l1.shape)
-            print(l2.shape)
-            print(y.shape)
+
 
             #backprop
             dw2 = l1.T.dot(2*(y - l2) * sigmoid_derivative(l2))
             dw1 = x.T.dot(numpy.dot(2*(y - l2) * sigmoid_derivative(l2), w2.T) * relu_derivative(l1))
-
-            print(dw1.shape)
-            print(dw2.shape)
 
             #vitesse de descente
             w1 += 0.005*dw1
