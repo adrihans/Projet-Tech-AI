@@ -35,7 +35,7 @@ def clean_review(text):
 
     return text
 
-df = pd.read_csv('labeledTrainData.tsv', sep='\t', quoting=3)
+df = pd.read_csv('labeledTrainData.tsv', sep='\t', quoting=3) #https://www.kaggle.com/c/word2vec-nlp-tutorial/data
 
 
 df['cleaned_review'] = df['review'].apply(clean_review)
