@@ -89,7 +89,5 @@ for k in range(200):
 #validation du modèle
 l1 = sigmoid(X_test2.dot(w1))
 l2 = sigmoid(l1.dot(w2))
-print(classif(l2))
-print(yy)
 error = abs(yy-classif(l2))
 print(numpy.mean(error))
