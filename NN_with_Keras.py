@@ -50,10 +50,10 @@ yyy=y_test.reshape(y_train.shape[0],1)
 
 
 #100 neurones dans la couche cachée
-w1 = numpy.random.randn(16000,100)
-w2 = numpy.random.randn(100,1)
-dw1 = numpy.random.randn(16000,100)
-dw2 = numpy.random.randn(100,1)
+w1 = numpy.random.rand(16000,100)
+w2 = numpy.random.rand(100,1)
+dw1 = numpy.random.rand(16000,100)
+dw2 = numpy.random.rand(100,1)
 l2 = 0
 
 x=X_train2
