@@ -63,7 +63,7 @@ y = binarizer_.transform(y_train)
 yy = binarizer_.transform(y_test)
 
 #nombre de couches
-nl = 4
+nl = 2
 
 #vitesse de descente
 v = 0.0005
@@ -83,7 +83,7 @@ if (nl>2):
     delta = numpy.random.randn(nl-2,n1,nn)
 
 #nombre epochs
-for k in range(1000):
+for k in range(500):
 
 
             li = sigmoid(x.dot(wi))
