@@ -93,7 +93,7 @@ for k in range(500):
                 for i in range(nl-4):
                     print(i)
                     l[i+1]=sigmoid(l[i].dot(w[i+1]))
-                    #l2 = sigmoid(l1.dot(w2))
+
                 lf = sigmoid(l[nl-3].dot(wf))
                 deltaf = 2*(y - lf)
                 dwf = l[nl-3].T.dot(2*(y - lf) * sigmoid_derivative(lf))
