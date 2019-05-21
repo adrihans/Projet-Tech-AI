@@ -90,7 +90,7 @@ for k in range(500):
             if (nl>2):
                 l[0] = sigmoid(li.dot(w[0]))
                 for i in range(nl-4):
-                    print(i)
+                  
                     l[i+1]=sigmoid(l[i].dot(w[i+1]))
 
                 lf = sigmoid(l[nl-3].dot(wf))
@@ -102,7 +102,7 @@ for k in range(500):
                     dw[nl-3] = l[nl-4].T.dot(delta[nl-3]*sigmoid_derivative(l[nl-3]))
 
                     for i in range(nl-4):
-                        print(i)
+                     
                         delta[nl-i-4] = (delta[nl-i-3] * sigmoid_derivative(l[nl-i-3])).dot(w[nl-i-3].T)
                         dw[nl-i-4] = l[nl-i-5].T.dot(delta[nl-i-4]* sigmoid_derivative(l[nl-i-4]))
                         w[nl-i-4] += v*dw[nl-i-4]
@@ -120,7 +120,7 @@ for k in range(500):
 
             wi += v*dwi
             wf += v*dwf
-            print(k)
+           
 
 
 
