@@ -6,7 +6,7 @@ import numpy as numpy
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn.preprocessing import LabelBinarizer
-
+import scipy
 
 
 def sigmoid(x):
@@ -63,7 +63,7 @@ y = binarizer_.transform(y_train)
 yy = binarizer_.transform(y_test)
 
 #nombre de couches
-nl = 2
+nl = 4
 
 #vitesse de descente
 v = 0.001
@@ -98,13 +98,18 @@ for k in range(500):
                 deltaf = 2*(y - lf)
                 dwf = l[nl-3].T.dot(2*(y - lf) * sigmoid_derivative(lf))
                 delta[nl-3] = (deltaf * sigmoid_derivative(lf)).dot(wf.T)
-                dw[nl-3] = l[nl-4].T.dot(delta[nl-3]*sigmoid_derivative(l[nl-3]))
-                for i in range(nl-4):
-                    print(i)
-                    delta[nl-i-4] = (delta[nl-i-3] * sigmoid_derivative(l[nl-i-3])).dot(w[nl-i-3].T)
-                    dw[nl-i-4] = l[nl-i-5].T.dot(delta[nl-i-4]* sigmoid_derivative(l[nl-i-4]))
-                    w[nl-i-4] += v*dw[nl-i-4]
-                delta[0] = (delta[1] * sigmoid_derivative(l[1])).dot(w[1].T)
+
+                if(nl>3):
+                    dw[nl-3] = l[nl-4].T.dot(delta[nl-3]*sigmoid_derivative(l[nl-3]))
+
+                    for i in range(nl-4):
+                        print(i)
+                        delta[nl-i-4] = (delta[nl-i-3] * sigmoid_derivative(l[nl-i-3])).dot(w[nl-i-3].T)
+                        dw[nl-i-4] = l[nl-i-5].T.dot(delta[nl-i-4]* sigmoid_derivative(l[nl-i-4]))
+                        w[nl-i-4] += v*dw[nl-i-4]
+
+                    delta[0] = (delta[1] * sigmoid_derivative(l[1])).dot(w[1].T)
+
                 dw[0] = li.T.dot(delta[0]* sigmoid_derivative(l[0]))
                 dwi = x.T.dot((delta[0] * sigmoid_derivative(l[0])).dot(w[0].T)*sigmoid_derivative(li))
                 w[nl-3] += v*dw[nl-3]
@@ -112,11 +117,11 @@ for k in range(500):
             else:
                 lf = sigmoid(li.dot(wf))
                 dwf = li.T.dot(2*(y - lf) * sigmoid_derivative(lf))
-                dwi = x.T.dot(numpy.dot(2*(y - lf) * sigmoid_derivative(lf), wf.T) * sigmoid(li))
+                dwi = x.T.dot(numpy.dot(2*(y - lf) * sigmoid_derivative(lf), wf.T) * sigmoid_derivative(li))
 
             wi += v*dwi
             wf += v*dwf
-       
+            print(k)
 
 
 
