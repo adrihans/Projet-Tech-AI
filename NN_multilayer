@@ -66,7 +66,7 @@ yy = binarizer_.transform(y_test)
 nl = 2
 
 #vitesse de descente
-v = 0.0005
+v = 0.001
 
 #nn neurones dans la couche cachée, n2 features
 nn = 50
