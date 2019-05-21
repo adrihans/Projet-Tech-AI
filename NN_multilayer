@@ -104,7 +104,7 @@ for k in range(500):
                     delta[nl-i-4] = (delta[nl-i-3] * sigmoid_derivative(l[nl-i-3])).dot(w[nl-i-3].T)
                     dw[nl-i-4] = l[nl-i-5].T.dot(delta[nl-i-4]* sigmoid_derivative(l[nl-i-4]))
                     w[nl-i-4] += v*dw[nl-i-4]
-
+                delta[0] = (delta[1] * sigmoid_derivative(l[1])).dot(w[1].T)
                 dw[0] = li.T.dot(delta[0]* sigmoid_derivative(l[0]))
                 dwi = x.T.dot((delta[0] * sigmoid_derivative(l[0])).dot(w[0].T)*sigmoid_derivative(li))
                 w[nl-3] += v*dw[nl-3]
