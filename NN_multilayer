@@ -116,7 +116,7 @@ for k in range(500):
 
             wi += v*dwi
             wf += v*dwf
-            print(k)
+       
 
 
 
