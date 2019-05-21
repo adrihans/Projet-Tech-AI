@@ -1,0 +1,138 @@
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+import re
+import pandas as pd
+import numpy as numpy
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.utils.validation import check_X_y, check_array
+from sklearn.preprocessing import LabelBinarizer
+
+
+
+def sigmoid(x):
+    return 1/(1 + numpy.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+
+def classif(x):
+    return 1 * (x > 0.5)
+
+def relu(x):
+    return x * (x > 0)
+
+def relu_derivative(x):
+    return 1. * (x > 0)
+
+def clean_review(text):
+    # Strip HTML tags
+    text = re.sub('<[^<]+?>', ' ', text)
+
+    # Strip escaped quotes
+    text = text.replace('\\"', '')
+
+    # Strip quotes
+    text = text.replace('"', '')
+
+    return text
+
+df = pd.read_csv('labeledTrainData.tsv', sep='\t', quoting=3)
+
+
+df['cleaned_review'] = df['review'].apply(clean_review)
+
+
+X_train, X_test, y_train, y_test = train_test_split(df['cleaned_review'], df['sentiment'], test_size=0.2)
+vectorizer = CountVectorizer(lowercase=True, binary=True)
+vectorizer.fit(X_train)
+
+X_train2=vectorizer.transform(X_train)
+X_test2=vectorizer.transform(X_test)
+
+y_train=list(y_train.values)
+y_test=list(y_test.values)
+
+
+
+x=X_train2
+
+n1,n2=x.shape
+binarizer_ = LabelBinarizer().fit(y_train)
+y = binarizer_.transform(y_train)
+yy = binarizer_.transform(y_test)
+
+#nombre de couches
+nl = 4
+
+#vitesse de descente
+v = 0.0005
+
+#nn neurones dans la couche cachée, n2 features
+nn = 50
+
+wi = numpy.random.randn(n2,nn)
+wf = numpy.random.randn(nn,1)
+dwi = numpy.random.randn(n2,nn)
+dwf = numpy.random.randn(nn,1)
+
+if (nl>2):
+    dw = numpy.random.randn(nl-2,nn,nn)
+    w = numpy.random.randn(nl-2,nn,nn)
+    l = numpy.random.randn(nl-2,n1,nn)
+    delta = numpy.random.randn(nl-2,n1,nn)
+
+#nombre epochs
+for k in range(1000):
+
+
+            li = sigmoid(x.dot(wi))
+
+            if (nl>2):
+                l[0] = sigmoid(li.dot(w[0]))
+                for i in range(nl-4):
+                    print(i)
+                    l[i+1]=sigmoid(l[i].dot(w[i+1]))
+                    #l2 = sigmoid(l1.dot(w2))
+                lf = sigmoid(l[nl-3].dot(wf))
+                deltaf = 2*(y - lf)
+                dwf = l[nl-3].T.dot(2*(y - lf) * sigmoid_derivative(lf))
+                delta[nl-3] = (deltaf * sigmoid_derivative(lf)).dot(wf.T)
+                dw[nl-3] = l[nl-4].T.dot(delta[nl-3]*sigmoid_derivative(l[nl-3]))
+                for i in range(nl-4):
+                    print(i)
+                    delta[nl-i-4] = (delta[nl-i-3] * sigmoid_derivative(l[nl-i-3])).dot(w[nl-i-3].T)
+                    dw[nl-i-4] = l[nl-i-5].T.dot(delta[nl-i-4]* sigmoid_derivative(l[nl-i-4]))
+                    w[nl-i-4] += v*dw[nl-i-4]
+
+                dw[0] = li.T.dot(delta[0]* sigmoid_derivative(l[0]))
+                dwi = x.T.dot((delta[0] * sigmoid_derivative(l[0])).dot(w[0].T)*sigmoid_derivative(li))
+                w[nl-3] += v*dw[nl-3]
+                w[0] += v*dw[0]
+            else:
+                lf = sigmoid(li.dot(wf))
+                dwf = li.T.dot(2*(y - lf) * sigmoid_derivative(lf))
+                dwi = x.T.dot(numpy.dot(2*(y - lf) * sigmoid_derivative(lf), wf.T) * sigmoid(li))
+
+            wi += v*dwi
+            wf += v*dwf
+            print(k)
+
+
+
+#validation du modèle
+if(nl>2):
+    l = numpy.random.randn(nl-2,5000,nn)
+    li = sigmoid(X_test2.dot(wi))
+    l[0] = sigmoid(li.dot(w[0]))
+    for i in range(nl-4):
+        l[i+1]=sigmoid(l[i].dot(w[i+1]))
+
+    lf = sigmoid(l[nl-3].dot(wf))
+
+else:
+    li = sigmoid(X_test2.dot(wi))
+    lf = sigmoid(li.dot(wf))
+
+error = abs(yy-classif(lf))
+print(numpy.mean(error))
